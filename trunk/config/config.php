@@ -3,10 +3,10 @@
 
 require_once("DB.php");
 
-#$db_dsn = "mysql://xxxx:@localhost/xxxx";
+$db_dsn = "mysql://user:name@host/dbname";
 
 $db_options = array(
-//	'persistent' => true,
+	'persistent' => true,
 	'portability' => DB_PORTABILITY_ALL
 );
 

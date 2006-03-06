@@ -5,13 +5,19 @@ require_once("includes/db.php");
 
 class Config {
 
-	var $_config;
-
-	function __construct() {
-	}
-
 	static function getStatic($name, $def = "") {
-		// TODO
+		$db = Database::singletone()->db();
+		$q = $db->prepare("SELECT config_value FROM phpdns_config WHERE config_name = ?");
+		if (PEAR::isError($q))
+			die($q->getMessage());
+
+		$r = $db->execute($q, $name);
+		if (PEAR::isError($r))
+			return $def;
+		if ($r->numRows() == 0)
+			return $def;
+		$row = $r->fetchRow();
+		return $row['config_value'];
 	}
 
 	static function get($name, $def = "") {
@@ -19,7 +25,24 @@ class Config {
 	}
 
 	static function set($name, $val) {
-		// TODO
+		$db = Database::singletone()->db();
+		$q = $db->prepare("SELECT config_value FROM phpdns_config WHERE config_name = ?");
+		if (PEAR::isError($q)) {
+			die($q->getMessage());
+		}
+
+		$r = $db->execute($q, $name);
+		if (PEAR::isError($r))
+			return $def;
+		if ($r->numRows() == 0) {
+			$q = $db->prepare("INSERT INTO Config (config_value, config_name) VALUES (?, ?)");
+		} else {
+			$q = $db->prepare("UPDATE Config SET config_value = ?, config_name = ?");
+		}
+		if (PEAR::isError($q))
+			die($q->getMessage());
+
+		$db->execute($q, array($val, $name));
 	}
 };
 

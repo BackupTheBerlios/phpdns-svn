@@ -5,7 +5,7 @@ require_once("DB.php");
 require_once("config/config.php");
 
 
-class Session {
+class Database {
 	
 	private static $_database = null;
 	private $_db = null;
